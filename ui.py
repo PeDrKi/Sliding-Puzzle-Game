@@ -9,7 +9,7 @@ def draw_board(screen, game):
             y = game.grid_offset_y + i * game.tile_size
             pygame.draw.rect(screen, GRAY, (x, y, game.tile_size, game.tile_size), 1)
             if game.board[i][j] == game.grid_size * game.grid_size - 1:
-                pygame.draw.rect(screen, BLACK, (x, y, game.tile_size, game.tile_size))
+                pygame.draw.rect(screen, PASTEL_BLUE_DARK, (x, y, game.tile_size, game.tile_size))
             elif game.mode == "image" and game.image_tiles:
                 tile_idx = game.board[i][j]
                 if tile_idx != game.grid_size * game.grid_size - 1 and game.image_tiles[tile_idx]:

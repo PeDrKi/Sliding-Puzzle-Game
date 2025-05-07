@@ -5,10 +5,11 @@ from solver import a_star
 from ui import draw_board, draw_buttons, draw_stats_popup
 
 class PuzzleGame:
-    def __init__(self, grid_size=3):
+    def __init__(self, grid_size=3, music_on=True):
         self.grid_size_options = [3, 4, 5, 6]
         self.grid_size = grid_size
         self.mode = "number"
+        self.music_on = music_on
         self.initialize_board()
         self.image_tiles = None
         self.selected_image = None
@@ -24,6 +25,8 @@ class PuzzleGame:
         self.error_message = None
         self.error_timer = 0
         self.solution_path = []
+        if self.music_on and pygame.mixer.music.get_busy() == False:
+            pygame.mixer.music.play(-1)  # Tiếp tục phát nhạc nền nếu bật
 
     def initialize_board(self):
         if self.grid_size > 7:
@@ -40,7 +43,7 @@ class PuzzleGame:
         self.show_stats = False
         self.paused = False
         self.solving = False
-        self.solution_path = []
+        self.solution_path = []  # Sửa lỗi dòng 46
         self.tile_size = 450 // self.grid_size
         self.grid_offset_x = (WINDOW_SIZE[0] - self.grid_size * self.tile_size) // 2
         self.grid_offset_y = 50
@@ -70,8 +73,6 @@ class PuzzleGame:
                 self.board[i][j] = self.grid_size * self.grid_size - 1
                 self.empty_pos = [i, j]
                 self.move_count += 1
-                if MOVE_SOUND:
-                    MOVE_SOUND.play()
                 self.solution_path = []
                 self.solving = False
                 self.paused = False

@@ -1,5 +1,5 @@
 import pygame
-from constants import WINDOW_SIZE, SMALL_FONT, PASTEL_BLUE, PASTEL_BLUE_HOVER, PASTEL_GREEN, PASTEL_GREEN_HOVER, PASTEL_ORANGE, PASTEL_ORANGE_HOVER, PASTEL_YELLOW, PASTEL_YELLOW_HOVER, BLACK, WHITE
+from constants import WINDOW_SIZE, SMALL_FONT, PASTEL_BLUE, PASTEL_BLUE_HOVER, PASTEL_BLUE_DARK, PASTEL_GREEN, PASTEL_GREEN_HOVER, PASTEL_ORANGE, PASTEL_ORANGE_HOVER, PASTEL_YELLOW, PASTEL_YELLOW_HOVER, BLACK, WHITE
 
 class HomeScreen:
     def __init__(self):
@@ -11,7 +11,8 @@ class HomeScreen:
         self.music_on = True
         self.music_button_color = BLACK
         self.music_button_text_color = WHITE
-        pygame.mixer.music.play(-1)  # Play background music on start
+        if self.music_on and pygame.mixer.music.get_busy() == False:
+            pygame.mixer.music.play(-1)  # Phát nhạc nền khi khởi tạo
 
     def draw_buttons(self, screen, mouse_pos):
         buttons = [
@@ -50,8 +51,12 @@ class HomeScreen:
             if int(size[0]) > 7:
                 continue
             rect = (combobox_x, combobox_y + i * 30, combobox_width, 30)
-            if rect[0] <= mouse_pos[0] <= rect[0] + rect[2] and rect[1] <= mouse_pos[1] <= rect[1] + rect[3]:
+            is_hovered = rect[0] <= mouse_pos[0] <= rect[0] + rect[2] and rect[1] <= mouse_pos[1] <= rect[1] + rect[3]
+            is_selected = size == self.selected_grid_size
+            if is_hovered:
                 pygame.draw.rect(screen, PASTEL_BLUE_HOVER, rect)
+            elif is_selected:
+                pygame.draw.rect(screen, PASTEL_BLUE_DARK, rect)
             else:
                 pygame.draw.rect(screen, PASTEL_BLUE, rect)
             pygame.draw.rect(screen, BLACK, rect, 1)
@@ -144,7 +149,7 @@ class HomeScreen:
             for event in pygame.event.get():
                 if event.type == pygame.QUIT:
                     self.running = False
-                    return None
+                    return None, False
                 elif event.type == pygame.MOUSEBUTTONDOWN:
                     x, y = event.pos
                     if self.show_instructions:
@@ -164,7 +169,7 @@ class HomeScreen:
                             if text == "Start":
                                 grid_size = int(self.selected_grid_size[0])
                                 self.running = False
-                                return grid_size
+                                return grid_size, self.music_on
                             elif text == "Size":
                                 self.show_combobox = not self.show_combobox
                             elif text == "How to play":
@@ -174,12 +179,13 @@ class HomeScreen:
                                 if self.music_on:
                                     self.music_button_color = BLACK
                                     self.music_button_text_color = WHITE
-                                    pygame.mixer.music.play(-1)
+                                    if pygame.mixer.music.get_busy() == False:
+                                        pygame.mixer.music.play(-1)
                                 else:
                                     self.music_button_color = WHITE
                                     self.music_button_text_color = BLACK
                                     pygame.mixer.music.stop()
                             elif text == "Exit":
                                 self.running = False
-                                return None
+                                return None, False
 # COPYRIGHT by Perfect Dragon King (PDK)

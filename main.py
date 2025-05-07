@@ -11,12 +11,13 @@ def main():
     
     while True:
         home = HomeScreen()
-        grid_size = home.run(screen)
+        result = home.run(screen)
         
-        if grid_size is None:
+        if result is None or result[0] is None:
             break
         
-        game = PuzzleGame(grid_size)
+        grid_size, music_on = result
+        game = PuzzleGame(grid_size, music_on)
         return_to_home = game.run(screen)
         
         if not return_to_home:
